@@ -10,7 +10,8 @@ import { toast } from "react-toastify";
 import ImageLoader from "../../loader/ImageLoader";
 import { useEffect, useState } from "react";
 import { addEssanceVideoAsync, getHomeVideosAsync, updateHomeVideoAsync } from "../../../feature/uiManagement/UiManagementSlice";
-const AddVideoModel = ({ setOpen,bannerVideo,essance,setDeleted,editData,edit,setEdit}) => {
+const AddVideoModel = ({ setOpen,bannerVideo,essance,editData,edit,setEdit}) => {
+ 
   const dispatch = useDispatch();
   const token = Cookies.get("token");
   const {isLoading}=useSelector(state=>state?.ui);
@@ -45,13 +46,15 @@ const handleUpload = async (e) => {
     }
 
     const addEssanceVideoHandler=async()=>{
+       if(!essanceTitle || !uploadeFle)  return  toast.error("Please enter all required field")
        try {
          const formData=new FormData();        
         formData.append("video",uploadeFle);
         formData.append("title",essanceTitle);
         const res=await dispatch(addEssanceVideoAsync({token,formData})).unwrap();
+        console.log(res);
+        
         if(res.success){
-         setDeleted(false);
           toast.success(res.message);
           setOpen(false);
           setEssanceTitle("")
@@ -60,6 +63,8 @@ const handleUpload = async (e) => {
         
         
        } catch (error) {
+        console.log(error);
+        
           toast.error("Something went wrong. Please try again.");
           
        }
@@ -97,9 +102,9 @@ useEffect(()=>{
                 value={"Category Image"}
               /> */}
                {isLoading?<ImageLoader/>:<CustomImageUpload  imageUploadHandler={handleUpload} label={
-             bannerVideo?.lenght>0?  <div className="flex flex-col gap-3 items-center cursor-pointer ">
+            (!previewfile && !bannerVideo?.[0]?.videoUrl )?  <div className="flex flex-col gap-3 items-center cursor-pointer ">
                    <Image preview={false} className="!size-[30px]" src={blogUpload}/>
-                <CustomText className={"!text-[#4C7399] !text-[24px] font-bold"} value={"Tap to upload Image"}/>
+                <CustomText className={"!text-[#4C7399] !text-[24px] font-bold"} value={"Tap to upload Video"}/>
                 <CustomText className={"!text-[#4C7399] text-[16px] "} value={"JPG, PNG up to 5 MB"}/>
                 </div> :<div className="h-[200px] !w-[200px]">
                         <video className="h-full w-full object-cover rounded-2xl"  src={previewfile??bannerVideo?.[0]?.videoUrl} muted autoPlay  />

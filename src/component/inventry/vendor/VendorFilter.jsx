@@ -10,8 +10,7 @@ import CustomMultipleFilter from "../../common/CustumMultipleFilter";
 import "../inventary.css";
 import AddNewVendor from "./AddNewVendor";
 import { vendorSort } from "./vendorFilterData";
-const VendorFilter=({setSearch,setSort,search,sortKey,setPage})=>{
-  const [addVendorModel,setAddVendorModel]=useState(false);
+const VendorFilter=({setSearch,setSort,search,sortKey,setPage,addVendorModel,setAddVendorModel,editData,setEditData})=>{
     return(
         <div className="inventary">
          <Row justify={"space-between"} gutter={[40]}>
@@ -23,7 +22,7 @@ const VendorFilter=({setSearch,setSort,search,sortKey,setPage})=>{
                  
                  <Col span={16}>
                  <div className="flex gap-5 justify-end"> 
-                     <CustomButton onclick={()=>{setAddVendorModel(true)}} value={<div className="flex items-center gap-2">
+                     <CustomButton onclick={()=>{setAddVendorModel(true),setEditData(null)}} value={<div className="flex items-center gap-2">
                     <PlusOutlined style={{fontSize:"20px",color:"#F0D5A0"}} />
                     <CustomText className={"!text-[#fff]"} value={"Add New vendor"}/>
 
@@ -35,7 +34,7 @@ const VendorFilter=({setSearch,setSort,search,sortKey,setPage})=>{
                   </div>
                   </Col>
             </Row>
-            <CustomModal  footer={false} setOpen={setAddVendorModel} open={addVendorModel} modalBody={<AddNewVendor setOpen={setAddVendorModel}/>} width={"1052px"}/>
+            <CustomModal  footer={false} setOpen={setAddVendorModel} open={addVendorModel} modalBody={<AddNewVendor  editData={editData} setOpen={setAddVendorModel}/>} width={"1052px"}/>
         </div>
     )
 }

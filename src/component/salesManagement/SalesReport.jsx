@@ -175,7 +175,7 @@ if(isLoading ) return <Loader/>
             <CustomButton onclick={()=>{navigate("/admin/online-sales")}}  className={"!text-[#fff] !w-[250px] !h-[60px]"} value={"Online Sales List"}/>
             <CustomButton onclick={()=>{navigate("/admin/make-order-list")}} className={"!text-[#fff] !w-[250px] !h-[60px]"}value={"Make To Order List "}/>
             <CustomButton onclick={()=>{navigate("/admin/offline-sales-list")}} className={"!text-[#fff] !w-[250px] !h-[60px]"}value={"Offline Sales List"}/>
-            <CustomButton onclick={()=>{setEditData(null),setAddExpenseModel(true),setEvent(true)}} className={"!text-[#fff] !w-[250px] !h-[60px]"}value={"Add Event"}/>
+            {/* <CustomButton onclick={()=>{setEditData(null),setAddExpenseModel(true),setEvent(true)}} className={"!text-[#fff] !w-[250px] !h-[60px]"}value={"Add Event"}/> */}
             <CustomButton onclick={()=>{setAddExpenseModel(true),setEvent(false)}} className={"!text-[#fff] !w-[250px] !h-[60px]"}value={"Add Expenses"}/>
          </div>
          <div>

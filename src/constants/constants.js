@@ -108,3 +108,14 @@ export function formatDateUTC(isoDate) {
   return `${day}/${month}/${year}`;
 }
 
+export function convertUtcToIst(utcString) {
+    const utcDate = new Date(utcString);
+    const options = {
+        timeZone: "Asia/Kolkata", // IST ज़ोन
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+    };
+
+    return utcDate.toLocaleString("en-IN",options);
+}
+

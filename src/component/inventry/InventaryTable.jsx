@@ -96,12 +96,12 @@ const InventaryTable=({setSelectedRowKeys,selectedRowKeys,setPage,page})=>{
       ),
       dataIndex: "title",
       key: "title",
-      width: 250,
+      width: 300,
       render: (text) =>  <CustomText value={text}/>
     },
    
     {
-      title:        <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Size"}/>,
+      title: <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Size"}/>,
       dataIndex: "size",
       key: "size",
       width: 120,
@@ -182,7 +182,7 @@ const InventaryTable=({setSelectedRowKeys,selectedRowKeys,setPage,page})=>{
           </div>
           <div
             className="h-[20px] w-[20px] cursor-pointer"
-            onClick={()=>{navigate("/admin/create-product",{state:record?._id})}}
+            onClick={()=>{navigate("/admin/create-product",{state:{id:record?._id,draft:false}})}}
           >
             <EditOutlined style={{ color: "#214344", fontSize: "24px" }} />
           </div>

@@ -6,7 +6,7 @@ import { addSku } from "../../../feature/admin/adminSlice";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-import { DeleteOutlined, LeftOutlined } from "@ant-design/icons";
+import { DeleteOutlined, LeftOutlined, UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../common/CustomTable";
 import CustomText from "../../common/CustomText";
 import Loader from "../../loader/Loader";
@@ -22,12 +22,15 @@ import {
   getPreviousBillingPlaceAsync,
 } from "../../../feature/order/orderSlice";
 import Cookies from "js-cookie";
+import CustomImageUpload from "../../common/CustomImageUpload";
+import { getImageUrlAsync } from "../../../feature/media/mediaSlice";
 const { Option } = Select;
 const AddnewOrder = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = Cookies.get("token");
   const { isLoading } = useSelector((state) => state?.order);
+  const { isMediaLoading } = useSelector((state) => state?.media);
   const [addressSearch, setAddressSearch] = useState({
     address: "",
     exhibition: "",
@@ -60,6 +63,7 @@ const AddnewOrder = () => {
     advancePayment: null,
     items: [],
     comment: "",
+    attachment:""
   });
 
   const subTotal = invoiceInputHandler?.items?.reduce(
@@ -176,6 +180,7 @@ const AddnewOrder = () => {
         advancePayment: invoiceInputHandler?.advancePayment,
         items: item,
         comment: invoiceInputHandler?.comment,
+        attachment:invoiceInputHandler?.attachment
       };
       const res = await dispatch(addNewOrderAsync({ token, data })).unwrap();
       if (res.success) {
@@ -220,6 +225,8 @@ const AddnewOrder = () => {
 
     }
   };
+
+
   const getexhibitionPlace = async () => {
     try {
       const data = {
@@ -240,6 +247,27 @@ const AddnewOrder = () => {
       toast.error("Something went wrong. Please try again.");  
     }
   };
+
+
+
+
+   const handleUpload = async (e) => {
+          const file = e.target.files[0];
+            if (!file) return;
+                  try {
+                  const formData = new FormData();
+                  formData.append("productImages", file);
+                  const res=await dispatch(getImageUrlAsync({token,formData})).unwrap();
+                  if(res.message){
+                      toast.success(res?.message)
+                      setInvoiceInputHandler({...invoiceInputHandler,attachment:res?.images[0]})
+                      // setPromotion({...promotion,banner:res?.images[0]});
+                     
+                  }
+                  } catch (err) {
+                  console.error(err);
+                }
+          };
   const columns = [
     {
       title: (
@@ -632,6 +660,23 @@ const AddnewOrder = () => {
                 </div>
               ) : null}
             </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+          <div className="flex flex-col gap-2">
+           <Typography.Text className="text-[#214344] !font-[600] !text-[14px]">
+                Upload File
+              </Typography.Text>
+                      <CustomImageUpload imageUploadHandler={(e)=>{handleUpload(e)}}  label={
+                     <div className="flex gap-2 items-center  h-[46px] p-[20px]  bg-[#fff]">
+                        {!invoiceInputHandler?.attachment && (<UploadOutlined style={{fontSize:"24px",color:"#214344" }} />)}
+                      <CustomText  className={"!text-[16px]"} value={(isMediaLoading&& "Loading...")|| invoiceInputHandler?.attachment?"File Uploaded":"Upload attachement"}/>
+                      </div>}
+              />
+
+          
+          </div>
           </Col>
         </Row>
 

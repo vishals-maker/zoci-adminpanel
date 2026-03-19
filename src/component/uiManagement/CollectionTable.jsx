@@ -29,7 +29,7 @@ const columns = [
     render:()=>{return <UiCollection sentinelRef={sentinelRef} setDeleteStatus={setDeleteStatus} collectionId={collectionId} setCollectionId={setCollectionId}/>}
   },
   {
-    title:  <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Signature"}/>,
+    title:  <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Products"}/>,
     dataIndex: 'age',
     key: 'age',
     width:700,

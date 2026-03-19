@@ -25,8 +25,8 @@ const CrmManagement=()=>{
         }
    const cardData=[
         {value:crmDashboard?.data?.anniversaryReminders,title:"Anniversary Reminders"},
-        {value:crmDashboard?.data?.totalCustomers,title:"Total Costumers"},
-        {value:crmDashboard?.data?.newCustomers,title:"New Costumers"},
+        {value:crmDashboard?.data?.totalCustomers,title:"Total Custumers"},
+        {value:crmDashboard?.data?.newCustomers,title:"New Custumers"},
         {value:crmDashboard?.data?.topCustomerSpend,title:"Top Customer Spend"},
         {value:crmDashboard?.data?.frequentShoppers,title:"Frequent Shoppers"},
         {value:crmDashboard?.data?.birthdayReminders,title:"Birthday Reminders"}

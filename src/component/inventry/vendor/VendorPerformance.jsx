@@ -8,10 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { vendorPerformanceAnalysis } from "../../../feature/inventaryManagement/inventarySlice";
 import { useEffect, useState } from "react";
 import { useDebounce } from "../../../hooks/UseDebounce";
-import { dataExportInExcelHandler } from "../constants";
 import { toast } from "react-toastify";
 const VendorPerformance=()=>{
-      // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+     const [addVendorModel,setAddVendorModel]=useState(false);
+     const [editData,setEditData]=useState(null);
      const token=Cookies.get("token"); 
       const navigate=useNavigate(); 
       const dispatch=useDispatch();
@@ -51,11 +51,11 @@ const VendorPerformance=()=>{
                 <CustomText className={"!text-[#214344] !text-[20px]"} value={"Inventory Management & Analysis → Vendor Performance Analysis"}/>
             </div>
             <div>
-                <VendorFilter filterKey={filter} sortKey={sort} setPage={setPage} search={search} setSort={setSort} setFilter={setFilter} setSearch={setSearch}/>
+                <VendorFilter setEditData={setEditData} editData={editData} addVendorModel={addVendorModel} setAddVendorModel={setAddVendorModel} filterKey={filter} sortKey={sort} setPage={setPage} search={search} setSort={setSort} setFilter={setFilter} setSearch={setSearch}/>
             </div>
             
               <div>
-                <VendorPerformanceTable setPage={setPage} page={page}/>
+                <VendorPerformanceTable editData={editData} setEditData={setEditData} addVendorModel={addVendorModel} setAddVendorModel={setAddVendorModel} setPage={setPage} page={page}/>
               </div>
         
         </div>

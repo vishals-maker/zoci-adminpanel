@@ -16,6 +16,7 @@ import { useDebounce } from "../../../../hooks/UseDebounce";
 import { dataExportInExcelHandler } from "../../constants";
 import { Skeleton } from "antd";
 import { toast } from "react-toastify";
+import { VendorProductdataExportInExcelHandler } from "./contants";
 const VendorPerformanceAnalysisDetails = () => {
         const [selectedRowKeys,setSelectedRowKeys]=useState([]);        
         const {id}=useParams();  
@@ -47,8 +48,7 @@ const VendorPerformanceAnalysisDetails = () => {
 
 
   const exportProductHandler = async () => {
-      const data = { productIds: selectedRowKeys };
-      dataExportInExcelHandler({dispatch,token,data})
+      VendorProductdataExportInExcelHandler({dispatch,token,id})
   };
   useEffect(()=>{
     getVendorPerformanceDetails();

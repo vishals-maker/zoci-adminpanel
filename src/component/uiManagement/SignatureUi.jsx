@@ -94,7 +94,7 @@ const SignatureUi=({collectionId})=>{
                                     <Image preview={false} src={deleteIcon} alt="deleteIcon"/>
                                 </div>
                                 <div
-                                onClick={()=>{navigate("/admin/create-product",{state:item?._id})}}
+                                onClick={()=>{navigate("/admin/create-product",{state:{id:item?._id,draft:false}})}}
                                     className="h-[20px] w-[20px] cursor-pointer"
                                 >
                                     <EditOutlined style={{ color: "#214344", fontSize: "24px" }} />

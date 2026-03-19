@@ -6,44 +6,43 @@ import { ArrowDownOutlined, UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { createBulkProductAsync, getAllProductAsync, vendorPerformanceDetailsAnalysis } from "../../feature/inventaryManagement/inventarySlice";
-import Loader from "../loader/Loader";
+import { createBulkAdminProductAsync } from "../../feature/inventaryManagement/inventarySlice";
 import { toast } from "react-toastify";
-const CreateBulkProduct=({setproductListBulkModel})=>{
+const CreateBulkProductForAdmin=({setproductListBulkModel})=>{
   const [csvFile,setCsvFile]=useState("");
   const dispatch=useDispatch();
   const {isCreateProductLoading}=useSelector(state=>state?.inventary)
   const token=Cookies.get("token");
-  const csvData = `Product Name,Price,Product Category,Sub Category,Year of Design,Base Metal Type,Metal Color,Size,Quantity Avaliable,Made for,Product Image,Vendor Phone`;
+  const csvData = `title,price,category,subCategory,yearOfDesign,metalType,metalColor,size,quantity,madeFor,weight,modelImage,productImage,additional1,additional2`;
     const handleUpload=(e)=>{
         const file=e.target.files[0]
         setCsvFile(file); 
     }
-
-    const createBulkHandler=async()=>{
+    const createAdminBulkHandler=async()=>{
         try {
             const formData=new FormData();
             formData.append("file",csvFile)
-            const res=await dispatch(createBulkProductAsync({token,formData})).unwrap();
-                if(res.success){
+            const res=await dispatch(createBulkAdminProductAsync({token,formData})).unwrap();
+            console.log(res);
+            
+                if(res.success){    
                     toast.success(res.message);
                     setproductListBulkModel(false)
                     setCsvFile(null)
+                }else{
+                    toast.error(res?.response?.data?.message)
+                    setproductListBulkModel(false);
+                    setCsvFile(null)
+
                 }
-            
-            
         } catch (error) {
+            console.log(error);
+            
              toast.error("Something went wrong. Please try again.");
             setproductListBulkModel(false)
-            setCsvFile(null)
-
-            
+            setCsvFile(null);   
         }
-
-
     }
-
-
     const downlopadCsvFileUploadHandler=()=>{
     const blob = new Blob([csvData], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -75,11 +74,11 @@ const CreateBulkProduct=({setproductListBulkModel})=>{
            {csvFile && <CustomText className={"!text-[12px] !text-[#214344]"} value={"File successfully added Please upload"}/>}
 
               <div className="flex justify-center items-center gap-3">
-                <CustomButton onclick={()=>{createBulkHandler()}} className={"!text-[#fff] rounded-full"} value={isCreateProductLoading?"...Loading":"Yes, Create Bulk"}/>
+                <CustomButton onclick={()=>{createAdminBulkHandler()}} className={"!text-[#fff] rounded-full"} value={isCreateProductLoading?"...Loading":"Yes, Create Bulk"}/>
                  <Button onClick={()=>{setproductListBulkModel(false)}} className="rounded-full">No,Cancel</Button>
               </div>
 
         </div>
     )
 }
-export default CreateBulkProduct;
+export default CreateBulkProductForAdmin;
