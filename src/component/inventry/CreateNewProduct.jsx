@@ -250,7 +250,6 @@ const baseMetalTypeOption = [
     video: []});
     setProductModel(false)
   }
-  
   useEffect(()=>{
     if(state){
 
