@@ -3,12 +3,13 @@ import CustomText from "../../common/CustomText";
 import CustomInput from "../../common/CustomInput";
 import CustomButton from "../../common/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {toast} from "react-toastify";
 import Cookies from "js-cookie"
-import { createVendorAsync, vendorPerformanceAnalysis } from "../../../feature/inventaryManagement/inventarySlice";
+import { createVendorAsync, editVendorDataAsync, vendorPerformanceAnalysis } from "../../../feature/inventaryManagement/inventarySlice";
 import { gstRegex, specialChar } from "../../../constants/regex";
-const AddNewVendor=({setOpen})=>{
+import { compareNewAndOldObject } from "../../../constants/constants";
+const AddNewVendor=({setOpen,editData})=>{
    const dispatch=useDispatch();
    const token=Cookies.get("token");
    const [gstErrorMessage,setGstErrorMessage]=useState("");
@@ -47,6 +48,7 @@ const AddNewVendor=({setOpen})=>{
        if(!gstErrorMessage=="") return toast.error("Wrong Gst Number!");
 
       try {
+        if(!editData){
         const data={...venderInput}
         const res=await dispatch(createVendorAsync({token,data})).unwrap();
         if(res?.status){
@@ -60,8 +62,32 @@ const AddNewVendor=({setOpen})=>{
           gst: "",
           phoneNumber: ""
         });
-        }        
-      } catch (err) {        
+        }
+        
+        } else{
+           const data=compareNewAndOldObject({oldObj:editData,newObj:venderInput});
+           if(Object.keys(data)?.length==0) return toast.error("Please change at least one field")
+           const res=await dispatch(editVendorDataAsync({token,id:editData?.vendorId,data})).unwrap();
+           console.log(res,"cxbvhsdhb");
+           if(res?.status){
+            setOpen(false);
+          toast.success(res.message);
+          dispatch(vendorPerformanceAnalysis({token}));
+          setVenderInput({
+          companyName: "",
+          vendorName: "",
+          address: "",
+          gst: "",
+          phoneNumber: ""
+        });
+          
+           }
+           
+        }       
+      } catch (err) {
+        console.log(err);
+           
+
         toast.error("Something went wrong")
        
         
@@ -71,6 +97,16 @@ const AddNewVendor=({setOpen})=>{
 
     
    }
+
+
+   
+   useEffect(()=>{
+     if(editData){
+      setVenderInput(editData)
+     }else{
+      setVenderInput(null)
+     }
+   },[editData])
   
 // if(isLoading) return <Loader/>
     return(

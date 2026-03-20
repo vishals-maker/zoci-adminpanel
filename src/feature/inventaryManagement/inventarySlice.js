@@ -5,6 +5,8 @@ const initialState = {
   inventaryDashboard:{}, 
   products:{},
   stockLevelAlert:[],
+  draftProducts:[],
+  draftById:{},
   notfyMe:[],
   vendorPerformance:[],
   bestSeller:[],
@@ -77,6 +79,45 @@ export const getAllProductByIdAsync = createAsyncThunk(
     }
   }
 );
+export const getDraftProductsById = createAsyncThunk(
+  "inventary/draftProductById",
+ async ({token,id}) => {
+        try {
+      const res = await api.get(`/product/draft-product/${id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+
+      });
+      
+      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+export const deleteDraftProductsById = createAsyncThunk(
+  "inventary/draftDeleteProduct",
+ async ({token,id}) => {
+        try {
+      const res = await api.delete(`/product/delete-draft-product/${id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+
+      });
+      
+      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 
 
 export const updateProductAsync = createAsyncThunk(
@@ -168,6 +209,38 @@ export const vendorPerformanceAnalysis = createAsyncThunk(
     }
   }
 );
+export const deleteVendorAsync = createAsyncThunk(
+  "inventary/deleteVendor",
+ async ({token,id}) => {
+        try {
+      const res = await api.delete(`product/deleteVendor/${id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      });      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+export const editVendorDataAsync = createAsyncThunk(
+  "inventary/editVendor",
+ async ({token,id,data}) => {
+        try {
+      const res = await api.put(`/product/updateVendor/${id}`,data,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      });      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 export const vendorPerformanceDetailsAnalysis = createAsyncThunk(
   "inventary/vendorPerformanceDetails",
  async ({token,id,data}) => {
@@ -213,6 +286,24 @@ export const dataExportInExcel = createAsyncThunk(
  async ({token,data}) => {
         try {
       const res = await api.post(`/product/export-products`,data,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        responseType: "blob",
+        
+      });
+       return { blob: res.data, headers: res.headers };      
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+export const vendordataExportInExcel = createAsyncThunk(
+  "inventary/vendordataExport",
+ async ({token,id}) => {
+        try {
+      const res = await api.get(`/product/export-inventory/${id}`,{
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -278,6 +369,22 @@ export const createBulkProductAsync = createAsyncThunk(
     }
   }
 );
+export const createBulkAdminProductAsync = createAsyncThunk(
+  "inventary/createAdminBulkProduct",
+ async ({token,formData}) => {
+        try {
+      const res = await api.post(`/product/bulk-admin-products`,formData,{
+        headers: {
+         "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`,
+        }
+      });      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+       error;
+    }
+  }
+);
 
 
 export const productBySkuAsync = createAsyncThunk(
@@ -296,6 +403,65 @@ export const productBySkuAsync = createAsyncThunk(
     }
   }
 );
+
+
+export const vendorProductDeleteAsync = createAsyncThunk(
+  "inventary/vendorProductDelete",
+ async ({token,id}) => {
+        try {
+      const res = await api.delete(`/product/delete-inventory-product/${id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        }
+      });      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const getDraftProductAsync = createAsyncThunk(
+  "inventary/productDraftAsync",
+ async ({token,data}) => {
+        try {
+      const res = await api.get(`product/draft-products`,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },params:{
+          ...data
+        }
+
+      });
+      
+      
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+export const deleteSelectedDraftProducts = createAsyncThunk(
+  "inventary/deleteDraftProducts",
+ async ({token,data}) => {
+        try {
+      const res = await api.delete(`product/delete-selected-draft-products`,{
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        data
+
+      });
+      return res?.data; // No need for `await res.data`
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 
 
 
@@ -481,6 +647,113 @@ export const inventarySlice = createSlice({
           state.error = action.payload;
           state.productBySku=[];
                 });
+        builder.addCase(deleteVendorAsync.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(deleteVendorAsync.fulfilled, (state, action) => {                
+          state.isLoading = false;
+        });
+        builder.addCase(deleteVendorAsync.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+         builder.addCase(editVendorDataAsync.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(editVendorDataAsync.fulfilled, (state, action) => {                
+          state.isLoading = false;  
+        });
+        builder.addCase(editVendorDataAsync.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+         builder.addCase(vendorProductDeleteAsync.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(vendorProductDeleteAsync.fulfilled, (state, action) => {                
+          state.isLoading = false;  
+        });
+        builder.addCase(vendorProductDeleteAsync.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+          builder.addCase(vendordataExportInExcel.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(vendordataExportInExcel.fulfilled, (state, action) => {                
+          state.isLoading = false;  
+        });
+        builder.addCase(vendordataExportInExcel.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+        
+        builder.addCase(createBulkAdminProductAsync.pending, (state) => {
+          state.isCreateProductLoading = true;
+        });
+        builder.addCase(createBulkAdminProductAsync.fulfilled, (state, action) => {                
+          state.isCreateProductLoading = false;   
+
+        });
+        builder.addCase(createBulkAdminProductAsync.rejected, (state, action) => {
+          state.isCreateProductLoading = false;
+          state.error = action.payload;
+        });
+         builder.addCase(getDraftProductAsync.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(getDraftProductAsync.fulfilled, (state, action) => {                
+          state.isLoading = false; 
+          state.draftProducts=action.payload  
+
+        });
+        builder.addCase(getDraftProductAsync.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+          builder.addCase(getDraftProductsById.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(getDraftProductsById.fulfilled, (state, action) => {                
+          state.isLoading = false; 
+          state.draftById=action.payload  
+
+        });
+        builder.addCase(getDraftProductsById.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+         builder.addCase(deleteDraftProductsById.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(deleteDraftProductsById.fulfilled, (state, action) => {                
+          state.isLoading = false; 
+
+        });
+        builder.addCase(deleteDraftProductsById.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+         builder.addCase(deleteSelectedDraftProducts.pending, (state) => {
+          state.isLoading = true;
+        });
+        builder.addCase(deleteSelectedDraftProducts.fulfilled, (state, action) => {                
+          state.isLoading = false; 
+
+        });
+        builder.addCase(deleteSelectedDraftProducts.rejected, (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
+        });
+        
+        
+        
+        
+        
+        
+        
+        
+                
         
         
         

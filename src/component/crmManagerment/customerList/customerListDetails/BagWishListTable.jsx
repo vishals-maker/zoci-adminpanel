@@ -42,7 +42,7 @@ const BagWishListTable=({id,setCustomerDetails})=>{
             if(search && !trimSearch) return;
           const res=await dispatch(customerWishListAndBagAsync({token,id,data})).unwrap();
           } catch (error) {
-            toast.error("Something went wrong. Please try again.");
+            // toast.error("Something went wrong. Please try again.");
           }
         }
 

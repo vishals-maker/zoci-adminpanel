@@ -35,7 +35,7 @@ const OrderHistoryTable=({id,setCustomerDetails})=>{
           try {
           const res=await dispatch(CustomerOrderHistoryAsync({token,id,data})).unwrap();
           } catch (error) {
-             toast.error("Something went wrong. Please try again.");;
+            //  toast.error("Something went wrong. Please try again.");;
           }
         }
 

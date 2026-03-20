@@ -36,12 +36,12 @@ const AveragePackagingCharge=({averagePackagingCharges,setProfitModel})=>{
     return (
         <div className="flex flex-col gap-5">
          <div className="flex justify-center">
-            <CustomText className={"text-[14px] font-bold "} value={"Update Average Packaging Charges"}/>
+            <CustomText className={"text-[14px] font-bold "} value={"Update Avg. Packaging and shipping charges"}/>
             </div>
             <Row gutter={[20,20]}>
                     <Col span={24}>
                       <div className="flex flex-col gap-2">
-                       <CustomText className={"text-[16px] "} value={"Average Packaging Charges"}/>
+                       <CustomText className={"text-[16px] "} value={"Avg. Packaging and shipping charges"}/>
                       {isLoading?<Skeleton.Node style={{width:"400px"}}/>: <CustomInput type={"number"} name={"eventName"} onchange={(e)=>{setAveragePackagingChargesInput(e.target.value)}} value={averagePackagingChargesInput} className={"h-[46px]"}/> }
                       </div>
                     </Col>

@@ -10,7 +10,7 @@ const BirthdayPromotionTable=({selectedRowKeys,setSelectedRowKeys,setPage,page})
       const {birthday,isLoading}=useSelector(state=>state?.marketing);
         const copyTextHandler=async(text)=>{
           try {
-              await navigator.clipboard.writeText(text);
+              await navigator.clipboard.writeText(text?.address[0]?.address+", "+text?.address[0]?.state);
               toast.success("Address copied successfully");
             } catch (err) {
               console.error('Failed to copy text: ', err);
@@ -58,7 +58,7 @@ const BirthdayPromotionTable=({selectedRowKeys,setSelectedRowKeys,setPage,page})
               dataIndex: "address",
               key: "address",
               width: 300,
-              render: (_,text) =>  <div className="flex justify-between items-center" > <CustomText value={text?.address[0]?.address.slice(0,30)+"..."}/><div className="!bg-[#214344] flex justify-center items-center p-2 rounded-full" onClick={()=>{copyTextHandler(text?.address[0]?.address)}}><CopyOutlined style={{fontSize:"16px" ,color:"#F0D5A0"}} /></div></div>
+              render: (_,text) =>  <div className="flex justify-between items-center" > <CustomText value={text?.address[0]?.address?.length>30?text?.address[0]?.address.slice(0,30)+"...":text?.address[0]?.address+", "+text?.address[0]?.state}/><div className="!bg-[#214344] flex justify-center items-center p-2 rounded-full" onClick={()=>{copyTextHandler(text)}}><CopyOutlined style={{fontSize:"16px" ,color:"#F0D5A0"}} /></div></div>
             },
             {
               title:        <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Birthday Date"}/>,

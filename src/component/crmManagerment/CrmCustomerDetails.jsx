@@ -24,36 +24,55 @@ const CrmCustomerDetails=({item,visitors})=>{
             
             </Col>
             <Col span={10}>
+            <div className="flex gap-5">
             <div className="flex flex-col gap-5">
                 <div><CustomText className={"!text-[#214344] !text-[18px] font-semibold"}  value={"Details"}/></div>
                 <div className="flex gap-10 ">
                 <div className="flex flex-col gap-2">
                     <CustomText className={"!text-[#000] !text-[18px] "}  value={"Email"}/>
-                    <CustomText className={"!text-[#214344] !text-[18px] w-[] "}  value={item?.email??"-"}/>
+                    <CustomText className={"!text-[#214344] !text-[18px] w-[] "}  value={item?.email??"N/A"}/>
                </div>
                 <div className="flex flex-col gap-2">
                     <CustomText className={"!text-[#000] !text-[18px] "}  value={"Phone"}/>
-                    <CustomText className={"!text-[#214344] !text-[18px] "}  value={item?.mobile}/>
+                    <CustomText className={"!text-[#214344] !text-[18px] "}  value={item?.phone??"N/A"}/>
                </div>
-               </div>
+
             </div>
-            
+            <div className="flex  gap-8">
+             <div className="flex flex-col gap-2">
+                    <CustomText className={"!text-[#000] !text-[18px] "}  value={"Spouse Name"}/>
+                    <CustomText className={"!text-[#214344] !text-[18px] "}  value={item?.spauseName}/>
+               </div>
+                <div className="flex flex-col gap-2">
+                    <CustomText className={"!text-[#000] !text-[18px] "}  value={"Spouse Number"}/>
+                    <CustomText className={"!text-[#214344] !text-[18px] "}  value={item?.spauseNumber}/>
+               </div>
+               </div>
+               </div> 
+               </div>
+
             </Col>
              <Col span={8}>
-           {visitors && <div className="flex flex-col gap-5">
+           {visitors && 
+                       <div className="flex flex-col gap-5">
                 <div><CustomText className={"!text-[#214344] !text-[18px] font-semibold"}  value={"Important Dates"}/></div>
                 <div className="flex gap-10 ">
                 <div className="flex flex-col gap-2">
                     <CustomText className={"!text-[#000] !text-[18px] "}  value={"Birthday"}/>
-                    <CustomText className={"!text-[#214344] !text-[18px] w-[] "}  value={isoToDDMMYYYY(item?.birthday)}/>
+                    <CustomText className={"!text-[#214344] !text-[18px] w-[] "}  value={item?.anniversary ? isoToDDMMYYYY(item?.birthday) :"N/A"}/>
                </div>
                 <div className="flex flex-col gap-2">
                     <CustomText className={"!text-[#000] !text-[18px] "}  value={"Anniversary"}/>
-                    <CustomText className={"!text-[#214344] !text-[18px] "}  value={isoToDDMMYYYY(item?.anniversary)}/>
+                    <CustomText className={"!text-[#214344] !text-[18px] "}  value={item?.anniversary ? isoToDDMMYYYY(item?.anniversary):"N/A"}/>
                </div>
+               
                </div>
-            </div>}
+            </div>
+           
+
+            }
             
+
             </Col>
         
         </Row>

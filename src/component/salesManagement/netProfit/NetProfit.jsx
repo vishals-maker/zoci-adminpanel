@@ -49,7 +49,7 @@ const NetProfit = () => {
       value: `Rs. ${netProfit?.cards?.netProfit}`,
     },
     {
-      title: "Average Packaging charges",
+      title: "Avg. Packaging and shipping charges",
       value: `Rs. ${netProfit?.cards?.avgPackageCost}`,
     },
    
@@ -85,7 +85,7 @@ const NetProfit = () => {
                 {isLoading? <Skeleton.Node active={"active"} className="!w-[100%] !h-[150px] rounded-xl" />:
                 <div className="relative"> 
                   <SalesCard item={item}/>
-                  {item?.title=="Average Packaging charges" && <div  onClick={()=>{setProfitModel(true)}} className="absolute top-1 right-3 cursor-pointer">
+                  {item?.title=="Avg. Packaging and shipping charges" && <div  onClick={()=>{setProfitModel(true)}} className="absolute top-1 right-3 cursor-pointer">
                     <EditOutlined style={{color:"#214344", fontSize:"20px"}} /></div>}
                 </div>}
               </Col>

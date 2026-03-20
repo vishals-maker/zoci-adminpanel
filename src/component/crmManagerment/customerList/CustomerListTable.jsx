@@ -34,6 +34,7 @@ const CustomerListTable = ({ page, setPage }) => {
       width: 100,
       render: (_, text, idx) => <CustomText value={idx + 1} />,
     },
+   
 
     {
       title: (
@@ -44,17 +45,30 @@ const CustomerListTable = ({ page, setPage }) => {
       ),
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 250,
       render: (_, text) => (
         <div
           className="cursor-pointer"
-          onClick={() => {
+          onClick={() => {text?.source!="MakeToOrder"  && 
             navigate(`/admin/crm-customer-list/${text?.id}`);
           }}
         >
           <CustomText value={text?.name ?? "NA"} />
         </div>
       ),
+    },
+     {
+      title: (
+        <CustomText
+          className="!text-[14px] !text-[#fff] font-semibold"
+          value={"Source"}
+        />
+      ),
+      dataIndex: "source",
+      key: "source",
+      width: 150,
+      align:"center",
+      render: (text) => <CustomText value={text=="MakeToOrder"?"Offline":"Online"} />,
     },
     {
       title: (

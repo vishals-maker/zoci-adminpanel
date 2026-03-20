@@ -1,33 +1,35 @@
-import { CloseOutlined, LeftOutlined } from "@ant-design/icons";
-import { useLocation, useNavigate } from "react-router-dom";
-import CustomText from "../common/CustomText";
+import { LeftOutlined } from "@ant-design/icons";
 import { Button, Col, Image, Row } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { compareNewAndOldObject } from "../../constants/constants";
+import { specialChar } from "../../constants/regex";
+import { createProductHandlerAsync, deleteDraftProductsById, getAllProductByIdAsync, getDraftProductsById, updateProductAsync } from "../../feature/inventaryManagement/inventarySlice";
+import { getImageUrlAsync } from "../../feature/media/mediaSlice";
+import CustomButton from "../common/CustomButton";
+import CustomImageUpload from "../common/CustomImageUpload";
 import CustomInput from "../common/CustomInput";
-import CustomSelect from "../common/CustomSelect";
-import "./inventary.css";
 import CustomLabel from "../common/CustomLabel";
 import CustomRadio from "../common/CustomRadio";
-import CustomImageUpload from "../common/CustomImageUpload";
-import TextArea from "antd/es/input/TextArea";
-import CustomButton from "../common/CustomButton";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie"
-import { useDispatch, useSelector } from "react-redux";
-import { getCategoryAsync } from "../../feature/uiManagement/UiManagementSlice";
-import { getImageUrlAsync } from "../../feature/media/mediaSlice";
-import { toast } from "react-toastify";
+import CustomSelect from "../common/CustomSelect";
+import CustomText from "../common/CustomText";
 import Loader from "../loader/Loader";
-import { createProductHandlerAsync, getAllProductByIdAsync, updateProductAsync } from "../../feature/inventaryManagement/inventarySlice";
-import { compareNewAndOldObject, generate4DigitRandomNumber } from "../../constants/constants";
-import { specialChar } from "../../constants/regex";
+import "./inventary.css";
 import { metalColor, subCategoryOption } from "./inventaryFilterData";
+import CustomModal from "../common/CustomModal";
+import ConfirmationPopup from "../common/ConfirmationPopup";
 const CreateNewProduct = () => {
+  const [productModel,setProductModel]=useState(false);
   const {state}=useLocation();  
   const navigate = useNavigate();
   const dispatch=useDispatch();
-  const token=Cookies.get("token")
+  const token=Cookies.get("token");
   const {category}=useSelector(state=>state?.ui);
-  const {isCreateProductLoading,productById,error}=useSelector(state=>state?.inventary);
+  const {isCreateProductLoading,productById,error,draftById}=useSelector(state=>state?.inventary);
   const {isMediaLoading}=useSelector(state=>state?.media);  
   const [productInput,setProductInput]=useState({
     title: "",
@@ -39,11 +41,11 @@ const CreateNewProduct = () => {
     subCategory: "",
     yearOfDesign: new Date().getFullYear(),
     collection: "",
-    baseMetalType: "",
+    metalType: "",
     metalColor: "",
     stone: "",
     designTags:[],
-    weight: null,
+    weight: "",
     size: "",
     quantity: null,
     hudNo: "",
@@ -56,9 +58,7 @@ const CreateNewProduct = () => {
         additional2: ""
     },
     video: []
-  })
-
-  
+  });
   const madeForOption = [
     { label: "Men", value: "Men" },
     { label: "Women", value: "Women" },
@@ -96,8 +96,6 @@ const baseMetalTypeOption = [
   { label: "ARGENTIUM SILVER (935)", value: "ARGENTIUM SILVER (935)" },
   { label: "PLATINUM (950)", value: "PLATINUM (950)" },
 ];
-
-
   const tagOptions=[
   { label: "Gold", value: "gold" },
   { label: "Lariat", value: "lariat" },
@@ -114,17 +112,16 @@ const baseMetalTypeOption = [
   { label: "Party", value: "party" },
   { label: "Gift", value: "gift" },
   { label: "Durable", value: "durable" }
-]
+];
   const categoryData=category?.categories?.map((item)=>{
     return {label:item?.title,value:item?.title}
   });
-
-
    const productInputHandler=(e)=>{
       const {name,value}=e.target;
-     if(specialChar?.test(value)) return ;
-      
+     if(specialChar?.test(value) && name!="weight" && name!="description") return ;
+     
       setProductInput({...productInput,[name]:value})
+      
    }
   
 
@@ -158,35 +155,23 @@ const baseMetalTypeOption = [
                  }
               }
               } catch (error) {                
-                 toast.error("Something went wrong !")
+                 toast.error("Something went wrong! or Image size is larger")
             }
       };
   const createProductHandler=async()=>{
-    if(
-      !productInput?.productionSource ||
-      !productInput?.category ||
-      !productInput?.subCategory ||
-      !productInput?.yearOfDesign ||
-      !productInput?.baseMetalType ||
-      !productInput?.metalColor || 
-      !productInput?.quantity || 
-      !productInput?.price || 
-      !productInput?.madefor || 
-      !productInput?.exclusive || 
-      !productInput?.images?.productImage || 
-      !productInput?.images?.modalImage ||
-      !productInput?.title  ||
-      !productInput?.description ||
-      ((productInput?.baseMetalType=="G18K" || productInput?.baseMetalType=="G14K" || productInput?.baseMetalType=="G9K") && !productInput?.hudNo) 
-    ) return toast.error("Please fill all field")
+    
+    if(((productInput?.metalType=="G18K" || productInput?.metalType=="G14K" || productInput?.metalType=="G9K") && !productInput?.hudNo) ) return toast.error("Base metal type is missing ")
     if((productInput?.category=="Rings" || productInput?.category=="Bracelets") && productInput?.size=="") return toast.error("Please enter size")
    try {
-    if(!state){
+    if(!state?.id  || state.draft){
     const data={...productInput}
        const res=await dispatch(createProductHandlerAsync({token,data})).unwrap();
         if(res.status && res.status_code==201){
       toast.success(res.message);
       navigate("/admin/inventary")
+       if(state?.draft){
+          dispatch(deleteDraftProductsById({id:state?.id,token}))
+          }
         }else{
       {res?.response?.data?.errors.map((item)=>{
         return( toast.error(item))
@@ -201,6 +186,7 @@ const baseMetalTypeOption = [
       }
     }
    } catch (error) {
+    
      toast.error("Something went wrong. Please try again.");
    }
     
@@ -210,26 +196,71 @@ const baseMetalTypeOption = [
   const getProductByIdData=async()=>{
     try {
 
-      const res=await dispatch(getAllProductByIdAsync({token,id:state})).unwrap();
+      const res=await dispatch(getAllProductByIdAsync({token,id:state?.id})).unwrap();
       
       if(res.success){
-        setProductInput(res.product)
+        setProductInput({...res?.product})
       }
    }
      catch (error) {
-       toast.error("Something went wrong. Please try again.");
+       
+    }
+  }
+
+  const getDraftProductById=async()=>{
+    try {
+
+      const res=await dispatch(getDraftProductsById({token,id:state?.id})).unwrap();
+      
+      if(res.success){
+        setProductInput(res.data)
+      }
+   }
+     catch (error) {
       
     }
   }
-  
+
+  const cancelConfirmHandler=()=>{
+    setProductInput({ title: "",
+    description: "",
+    price: null,
+    otherCharges: null,
+    productionSource:"",
+    category: "",
+    subCategory: "",
+    yearOfDesign: new Date().getFullYear(),
+    collection: "",
+    metalType: "",
+    metalColor: "",
+    stone: "",
+    designTags:[],
+    weight: "",
+    size: "",
+    quantity: null,
+    hudNo: "",
+    madefor: "",
+    exclusive: "",
+    images: {
+        modalImage: "",
+        productImage: "",
+        additional1: "",
+        additional2: ""
+    },
+    video: []});
+    setProductModel(false)
+  }
   useEffect(()=>{
     if(state){
-   getProductByIdData();
+
+    if(state.draft){
+      getDraftProductById();
+    }else{
+      getProductByIdData();
     }
-  },[])
+    }
 
-
-
+  },[]);
 
   if(isMediaLoading || isCreateProductLoading) return <Loader/>
   return (
@@ -239,7 +270,7 @@ const baseMetalTypeOption = [
           <div
             className="cursor-pointer"
             onClick={() => {
-              navigate("/admin/inventary");
+              navigate("/admin/inventary",{state:{}});
             }}
           >
             <CustomText
@@ -272,7 +303,7 @@ const baseMetalTypeOption = [
               <Col xxl={12} xl={12} md={12} sm={24} xs={24}>
                 <div className="flex flex-col gap-2">
                   <CustomLabel required value={"Product Category"} />
-                  <CustomSelect value={productInput?.category} onchange={(e)=>{setProductInput({...productInput,category:e})}} options={categoryData} className="!rounded-full" />
+                  <CustomSelect value={productInput?.category} onchange={(e)=>{setProductInput({...productInput,subCategory:"",category:e})}} options={categoryData} className="!rounded-full" />
                 </div>
               </Col>
             </Row>
@@ -302,7 +333,7 @@ const baseMetalTypeOption = [
                 <div className="flex flex-col gap-2">
                   <CustomLabel required value={"Base Metal Type"} />
                    
-                   <CustomSelect value={productInput?.baseMetalType} onchange={(e)=>{setProductInput({...productInput,baseMetalType:e})}} options={baseMetalTypeOption} className="!rounded-full" />
+                   <CustomSelect value={productInput?.metalType} onchange={(e)=>{setProductInput({...productInput,metalType:e})}} options={baseMetalTypeOption} className="!rounded-full" />
 
 
                 </div>
@@ -330,15 +361,13 @@ const baseMetalTypeOption = [
                     onchange={productInputHandler} 
                     className="!rounded-full" /> */}
                    <CustomSelect value={productInput?.stone} onchange={(e)=>{setProductInput({...productInput,stone:e})}} options={stoneTypeOption} className="!rounded-full" />
-
-
                 </div>
               </Col>
               <Col span={12}>
                 <div className="flex flex-col gap-2">
                   <CustomLabel required={(productInput?.category=="Rings" || productInput?.category=="Bracelets" )?true:false}  value={"Size"} />
                   <CustomInput
-                  type={"number"}
+                  type={"text"}
                   name="size"
                   value={productInput?.size}
                   onchange={productInputHandler}
@@ -373,7 +402,7 @@ const baseMetalTypeOption = [
                 <div className="flex flex-col gap-2">
                   <CustomLabel value={"Weight in Grams"} />
                   <CustomInput name="weight"
-                    type={"number"}
+                    type={"text"}
                       value={productInput?.weight}
                       onchange={productInputHandler}
                       className="!rounded-full" />
@@ -420,7 +449,7 @@ const baseMetalTypeOption = [
               <Col span={12}>
                 <div className="flex flex-col gap-2">
                   <CustomLabel required value={"Made For"} />
-                  <CustomRadio name={"madefor"} value={productInput?.madefor} defaultValue={"men"} onchange={productInputHandler}  options={madeForOption} />
+                  <CustomRadio name={"madefor"} value={productInput?.madefor} defaultValue={"Men"} onchange={productInputHandler}  options={madeForOption} />
                 </div>
               </Col>
               <Col span={12}>
@@ -449,7 +478,7 @@ const baseMetalTypeOption = [
                         <Image
                           className="!size-[100px]"
                           preview={false}
-                           src={productInput?.images?.modalImage==""?
+                           src={!productInput?.images?.modalImage?
                             "https://zoci-data.s3.ap-south-1.amazonaws.com/productImages/1764011866002_add-profile-picture-icon-upload-photo-of-social-media-user-vector.jpg":
                             productInput?.images?.modalImage
                           }
@@ -471,7 +500,7 @@ const baseMetalTypeOption = [
                         <Image
                           className="!size-[100px]"
                           preview={false}
-                          src={productInput?.images?.productImage==""?
+                          src={!productInput?.images?.productImage?
                             "https://zoci-data.s3.ap-south-1.amazonaws.com/productImages/1764011866002_add-profile-picture-icon-upload-photo-of-social-media-user-vector.jpg":
                             productInput?.images?.productImage
                           }
@@ -494,7 +523,7 @@ const baseMetalTypeOption = [
                         <Image
                           className="!size-[100px]"
                           preview={false}
-                           src={productInput?.images?.additional1==""?
+                           src={!productInput?.images?.additional1?
                             "https://zoci-data.s3.ap-south-1.amazonaws.com/productImages/1764011866002_add-profile-picture-icon-upload-photo-of-social-media-user-vector.jpg":
                             productInput?.images?.additional1
                           }
@@ -515,7 +544,7 @@ const baseMetalTypeOption = [
                         <Image
                           className="!size-[100px]"
                           preview={false}
-                           src={productInput?.images?.additional2==""?
+                           src={!productInput?.images?.additional2?
                             "https://zoci-data.s3.ap-south-1.amazonaws.com/productImages/1764011866002_add-profile-picture-icon-upload-photo-of-social-media-user-vector.jpg":
                             productInput?.images?.additional2
                           }
@@ -535,15 +564,15 @@ const baseMetalTypeOption = [
                     <CustomImageUpload
                      imageUploadHandler={(e)=>{handleUpload(e,"video")}}
                       label={
-                        productInput?.video?.length==0 ?
+                        !productInput?.video?.length ?
                         (<Image
                           className="!size-[100px]"
                           preview={false}
                           src={
                             "https://zoci-data.s3.ap-south-1.amazonaws.com/productImages/1764011866002_add-profile-picture-icon-upload-photo-of-social-media-user-vector.jpg"
                           }
-                        />):(<video className="rounded-xl" autoPlay width="250">
-                                <source src={productInput?.video[0]} type="video/mp4" />
+                        />):( <video className="rounded-xl" autoPlay width="250">
+                                <source src={productInput?.video?.length && productInput?.video[0]} type="video/mp4" />
                                 Your browser does not support the video tag.
                               </video>)
                       }
@@ -605,11 +634,15 @@ const baseMetalTypeOption = [
             </Row>
            <div className="flex justify-center gap-[20px]">
               <CustomButton onclick={()=>{createProductHandler()}} className={"!text-[#fff] w-[300px]"} value={"Submit"}/>
-              <Button className={"!text-[#214344] rounded-full w-[300px]"}>Cancel</Button>
+              <Button onClick={()=>{setProductModel(true)}} className={"!text-[#214344] rounded-full w-[300px]"}>Cancel</Button>
            </div>
           </div>
         </div>
       </div>
+
+
+            <CustomModal closeIcon  footer={false} setOpen={setProductModel} open={productModel} modalBody={<ConfirmationPopup  confirmationPopUpHandler={cancelConfirmHandler} setDeleteConfirm={setProductModel} /> } width={"800px"}  align={"center"}/>
+     
     </>
   );
 };

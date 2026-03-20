@@ -106,6 +106,15 @@ const ActivePromotionTable=({setPage,page})=>{
       align: "center",
       render: (text) => <CustomText value={text}/>
     },
+
+     {
+      title: (   <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Created Date"}/>),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 300,
+      align: "center",
+      render: (text) =>  <CustomText value={isoToIST(text)}/>
+    },
     {
       title: (   <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Expiry Date"}/>),
       dataIndex: "expiryDate",
@@ -161,7 +170,7 @@ const ActivePromotionTable=({setPage,page})=>{
 if(isLoading) return <Loader/>
     return(
         <>
-        <CustomTable  scroll={{x:1700}}  dataSource={promotion?.promos} columns={columns}/>
+        <CustomTable  scroll={{x:1800}}  dataSource={promotion?.promos} columns={columns}/>
         <CustomPagination pageNumber={page} total={promotion?.total} onchange={(e)=>{setPage(e)}}/>
        <CustomModal  footer={false} setOpen={setPromotionModel} open={promotionModel} modalBody={!edit?<ConfirmationPopup confirmationPopUpHandler={confirmationPopUpHandler} setDeleteConfirm={setPromotionModel} />:<CreateNewPromotion edit={edit} edititem={edititem} setOpen={setPromotionModel}/>} width={edit?"1052px":"552px"} align={"center"}/>
 

@@ -8,9 +8,10 @@ import CustomInput from "../common/CustomInput";
 import CustomModal from "../common/CustomModal";
 import CustomText from "../common/CustomText";
 import CustomMultipleFilter from "../common/CustumMultipleFilter";
-import CreateBulkProduct from "./CreateBulkProduct";
 import "./inventary.css";
 import { filterOptions, sortOption } from "./inventaryFilterData";
+import CreateBulkProductForAdmin from "./CreateBulkProductForAdmin";
+import InventoryLiveDraftButton from "./InventoryLiveDraftButton";
 const ProductList=({exportProductHandler,setFilter,setSearch,setSort,sortKey,filterKey,setPage})=>{
   const [productListBulkModel,setproductListBulkModel]=useState(false)
   const navigate=useNavigate();
@@ -46,7 +47,7 @@ const ProductList=({exportProductHandler,setFilter,setSearch,setSort,sortKey,fil
                   </div>
                   </Col>
             </Row>
-            <CustomModal closeIcon  footer={false} setOpen={setproductListBulkModel} open={productListBulkModel} modalBody={<CreateBulkProduct setproductListBulkModel={setproductListBulkModel}/>} width={"490px"}  align={"center"}/>
+            <CustomModal closeIcon  footer={false} setOpen={setproductListBulkModel} open={productListBulkModel} modalBody={<CreateBulkProductForAdmin setproductListBulkModel={setproductListBulkModel}/>} width={"490px"}  align={"center"}/>
             </div>
         
     )

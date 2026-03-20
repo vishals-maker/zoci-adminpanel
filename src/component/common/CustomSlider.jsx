@@ -85,14 +85,14 @@ if(isDashboardLoading) return <Skeleton.Node active={true} style={{width:"1200px
           <div className=" flex justify-between items-center px-20 relative">
             <CustomText className={"!text-[24px] font-bold !text-[#214344] "} value={item?.eventName??"-"}/>
             <CustomText className={"!text-[24px] font-bold !text-[#214344] "} value={item?.city}/>
-            <CustomText className={"!text-[24px] font-bold !text-[#214344] "} value={`Rs. ${item?.totalSales}`}/>
-            <CustomText className={"!text-[24px] font-bold !text-[#214344] "} value={`Rs. ${item?.totalExpansions}`}/>
+            <CustomText className={"!text-[24px] font-bold !text-[#214344] "} value={`Rs. ${item?.totalSales?.toFixed(2)}`}/>
+            {/* <CustomText className={"!text-[24px] font-bold !text-[#214344] "} value={`Rs. ${item?.totalExpansions}`}/> */}
             <Image className="!size-[100px] object-cover" src={item?.image}/>
             <div className="absolute top-0 right-0">
-            <div className="flex gap-2">
+            {/* <div className="flex gap-2">
               <div className="cursor-pointer" onClick={()=>{eventDeleteHandler(item)}}><DeleteOutlined style={{fontSize:"16px",color:"#214344"}} /></div>
               <div className="cursor-pointer" onClick={()=>{setEditData(item),setAddExpenseModel(true),setEvent(true)}}><EditOutlined  style={{fontSize:"16px",color:"#214344"}} /></div>
-           </div>
+           </div> */}
             </div>
             </div>
         </SwiperSlide>

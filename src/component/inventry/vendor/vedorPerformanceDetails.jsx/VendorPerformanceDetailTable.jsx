@@ -1,25 +1,21 @@
 
 
-import { useEffect, useState } from "react";
-import { Avatar, Image, Space } from "antd";
-import CustomText from "../../../common/CustomText";
-import { EditOutlined } from "@ant-design/icons";
+import { Image, Space } from "antd";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { deleteProductAsync, getAllProductAsync } from "../../../feature/inventaryManagement/inventarySlice";
+import CustomText from "../../../common/CustomText";
 import Cookies from "js-cookie";
-import deleteIcon from "../../../../assets/icons/deleteIcon.png"
-import CustomModal from "../../../common/CustomModal";
-import ConfirmationPopup from "../../../common/ConfirmationPopup";
 import { toast } from "react-toastify";
-import Loader from "../../../loader/Loader";
-import CustomTable from "../../../common/CustomTable";
-import { deleteProductAsync, vendorPerformanceDetailsAnalysis } from "../../../../feature/inventaryManagement/inventarySlice";
-import { useNavigate } from "react-router-dom";
+import deleteIcon from "../../../../assets/icons/deleteIcon.png";
+import { vendorPerformanceDetailsAnalysis, vendorProductDeleteAsync } from "../../../../feature/inventaryManagement/inventarySlice";
+import ConfirmationPopup from "../../../common/ConfirmationPopup";
+import CustomModal from "../../../common/CustomModal";
 import CustomPagination from "../../../common/CustomPagination";
+import CustomTable from "../../../common/CustomTable";
+import Loader from "../../../loader/Loader";
 
 const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,setPage})=>{
-  const {vendorPerformanceAnalysisData}=useSelector(state=>state?.inventary);
-  const navigate=useNavigate();
+  const {vendorPerformanceAnalysisData}=useSelector(state=>state?.inventary);  
     const token=Cookies.get("token");
     const dispatch=useDispatch();
   const [deleteConfirm,setDeleteConfirm]=useState();
@@ -31,30 +27,21 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
  
   const confirmationPopUpHandler=async()=>{
     try {
-      const res=await dispatch(deleteProductAsync({token,id:deleteId})).unwrap();
+      const res=await dispatch(vendorProductDeleteAsync({token,id:deleteId})).unwrap();
       if(res?.success){
        dispatch(vendorPerformanceDetailsAnalysis({token,id}))
       }      
       if(res.success){
         toast.success(res?.message);
         setDeleteConfirm(false)
-
       }else{
         toast.error(res?.message);
         setDeleteConfirm(false)
-
-
       }
-
-      
-      
     } catch (error) {
        toast.error("Something went wrong. Please try again.");
-        toast.error(error?.message);
-
-        setDeleteConfirm(false)
-
-      
+       toast.error(error?.message);
+       setDeleteConfirm(false);
     }
      
   }
@@ -69,6 +56,7 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
       ),
       dataIndex: "title",
       key: "title",
+      align:"center",
       width: 100,
       render: (_,record,idx) =>  <CustomText className={  " "} value={idx+1}/>
     },
@@ -80,7 +68,7 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
       dataIndex: "images",
       key: "images",
       width: 200,
-      render: (text) => <div className="flex justify-center"> <Image className="!size-[50px]" src={text?.productImage}/></div>
+      render: (text) => <div className="flex justify-center"> <Image className="!size-[50px]" src={text?.productImage??"https://zoci-data.s3.ap-south-1.amazonaws.com/productImages/1770981878160_images%20%281%29.jpeg"}/></div>
     },
       {
       title: (
@@ -93,21 +81,11 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
       render: (text) =>  <CustomText value={text}/>
     },
     {
-      title: (
-       <CustomText className="!text-[14px] !text-[#fff] font-semibold" value={"SKU"}/>
-
-      ),
-      dataIndex: "sku",
-      key: "sku",
-      width: 150,
-      render: (text) =>  <CustomText value={text}/>
-    },
-    {
       title:        <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Size"}/>,
       dataIndex: "size",
       key: "size",
       width: 130,
-      render: (text) =>   <CustomText value={text??"Na"}/>
+      render: (text) =>   <CustomText value={text==""?"NA":text}/>
     },
     {
       title: (
@@ -135,16 +113,16 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
       align: "center",
       render: (text) => <CustomText value={text??"NA"}/>
     },
+    // {
+    //   title: (   <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Vendor"}/>),
+    //   dataIndex: "vendor",
+    //   key: "vendor",
+    //   width: 300,
+    //   align: "center",
+    //   render: (text) =>  <CustomText value={text??"NA"}/>
+    // },
     {
-      title: (   <CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Vendor"}/>),
-      dataIndex: "vendor",
-      key: "vendor",
-      width: 300,
-      align: "center",
-      render: (text) =>  <CustomText value={text??"NA"}/>
-    },
-    {
-      title: (<CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Stock"}/>),
+      title: (<CustomText  className="!text-[14px] !text-[#fff] font-semibold" value={"Quantity"}/>),
       dataIndex: "quantity",
       align: "center",
       key: "quantity",
@@ -169,12 +147,7 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
           >
             <img src={deleteIcon} alt="deleteIcon"/>
           </div>
-          <div
-            className="h-[20px] w-[20px] cursor-pointer"
-            onClick={()=>{navigate("/admin/create-product",{state:record?._id})}}
-          >
-            <EditOutlined style={{ color: "#214344", fontSize: "24px" }} />
-          </div>
+         
         </Space>
       ),
      
@@ -191,8 +164,8 @@ const VendorPerformanceDetailTable=({setSelectedRowKeys,selectedRowKeys,id,page,
   if(isLoading) return <Loader/>
     return(
         <>
-        <CustomTable   scroll={{x:1700}} rowSelection={rowSelection}  dataSource={vendorProductsData} columns={columns}/>
-              <CustomPagination pageNumber={page} total={vendorPerformanceAnalysisData?.totalProducts} onchange={(e)=>{setPage(e)}}/>
+        <CustomTable   scroll={{x:1700}}  dataSource={vendorProductsData} columns={columns}/>
+              <CustomPagination pageNumber={page} total={vendorPerformanceAnalysisData?.data?.totalProducts} onchange={(e)=>{setPage(e)}}/>
       
             <CustomModal  footer={false} setOpen={setDeleteConfirm} open={deleteConfirm} modalBody={<ConfirmationPopup confirmationPopUpHandler={confirmationPopUpHandler} setDeleteConfirm={setDeleteConfirm} />} width={"552px"} align={"center"}/>
         
