@@ -2,7 +2,7 @@ import { Col, Row } from "antd";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteSelectedDraftProducts, getAllProductAsync, getDraftProductAsync, getInventaryDashbordAsync } from "../../feature/inventaryManagement/inventarySlice.js";
+import { deleteSelectedDraftProducts, getAllProductAsync, getDraftProductAsync, getInventaryDashbordAsync, updateMetalPriceAsync } from "../../feature/inventaryManagement/inventarySlice.js";
 import Loader from "../loader/Loader.jsx";
 import { dataExportInExcelHandler } from "./constants.jsx";
 import InventaryCountCards from "./InventaryCountCards.jsx";
@@ -101,6 +101,21 @@ const draftsearchHandler=(e)=>{
       setDeleteProductsModel(false)
     }
   }
+
+
+  const updatePriceHandler = async ({ category, price }) => {
+  try {
+    const token = Cookies.get("token");
+    const res = await dispatch(
+      updateMetalPriceAsync({ token, data: { category, price } })
+    ).unwrap();
+    if (res?.status_code == 200) {
+      toast.success(res?.message);
+    }
+  } catch (error) {
+    toast.error("Price update failed");
+  }
+};
   
   useEffect(() => {
     if(liveProducts){
@@ -130,7 +145,7 @@ const draftsearchHandler=(e)=>{
             </Col>
           </Row>
           <InventaryCountCards cardData={inventaryDashboard?.cards}/>
-         {liveProducts && <ProductList  setPage={setPage} filterKey={filterKey} sortKey={sortKey} setFilter={setFilter} setSearch={setSearch} setSort={setSort} exportProductHandler={exportProductHandler}/>}
+         {liveProducts && <ProductList  updatePriceHandler={updatePriceHandler} setPage={setPage} filterKey={filterKey} sortKey={sortKey} setFilter={setFilter} setSearch={setSearch} setSort={setSort} exportProductHandler={exportProductHandler}/>}
           <div>
             <InventoryLiveDraftButton setPage={setPage} liveProducts={liveProducts} setLiveProducts={setLiveProducts} /> 
           </div>

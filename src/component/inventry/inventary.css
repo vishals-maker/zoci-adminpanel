@@ -70,3 +70,23 @@
 .product-form .ant-select-selector{
   border-radius: 20px;
 }
+
+
+
+/* inventary.css mein add karo */
+.ant-select-selector {
+  background-color: #214344 !important;
+  border: none !important;
+}
+
+.ant-select-selection-placeholder {
+  color: white !important;
+}
+
+.ant-select-selection-item {
+  color: white !important;
+}
+
+.ant-select-arrow {
+  color: white !important;
+}
