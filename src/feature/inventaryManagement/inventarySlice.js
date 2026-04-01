@@ -462,6 +462,23 @@ export const deleteSelectedDraftProducts = createAsyncThunk(
   }
 );
 
+export const updateMetalPriceAsync = createAsyncThunk(
+  "inventary/updateMetalPrice",
+  async ({ token, data }) => {
+    try {
+      const res = await api.put(`/product/update-metal-price`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return res?.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 
 
 
@@ -745,6 +762,16 @@ export const inventarySlice = createSlice({
           state.isLoading = false;
           state.error = action.payload;
         });
+        builder.addCase(updateMetalPriceAsync.pending, (state) => {
+  state.isLoading = true;
+});
+builder.addCase(updateMetalPriceAsync.fulfilled, (state, action) => {
+  state.isLoading = false;
+});
+builder.addCase(updateMetalPriceAsync.rejected, (state, action) => {
+  state.isLoading = false;
+  state.error = action.payload;
+});
         
         
         
