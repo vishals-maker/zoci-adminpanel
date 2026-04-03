@@ -18,24 +18,18 @@ const ProductList=({exportProductHandler,setFilter,setSearch,setSort,sortKey,fil
   const navigate=useNavigate();
   const [category, setCategory] = useState("");
 const [price, setPrice] = useState("");
+const [isPriceUpdating, setIsPriceUpdating] = useState(false);
 
 const handleSubmit = async () => {
-    // FIX 1: toast now works (imported above)
     if (!category || !price) {
       toast.error("Please select category and enter price");
       return;
     }
- 
+
     try {
-      // FIX 3: disable button during API call
       setIsPriceUpdating(true);
- 
-      // FIX 2: await the handler and show success toast
       await updatePriceHandler({ category, price });
- 
-      toast.success(
-        `${category === "gold" ? "Gold" : "Silver"} price updated successfully!`
-      );
+      toast.success(`${category === "gold" ? "Gold" : "Silver"} price updated successfully!`);
       setCategory("");
       setPrice("");
     } catch (error) {
@@ -106,8 +100,9 @@ const handleSubmit = async () => {
     <div>
       <CustomButton
         onclick={handleSubmit}
+         disabled={isPriceUpdating} 
         className={"!text-[#fff] !bg-[#214344]"}
-        value={"Update Price"}
+         value={isPriceUpdating ? "Updating..." : "Update Price"}
       />
     </div>
 
