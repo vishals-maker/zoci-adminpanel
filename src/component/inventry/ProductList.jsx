@@ -1,6 +1,7 @@
 import { Col, Image, Row, Select } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import filter from "../../assets/inventary/filter.png";
 import sort from "../../assets/inventary/sort.png";
 import CustomButton from "../common/CustomButton";
@@ -18,15 +19,31 @@ const ProductList=({exportProductHandler,setFilter,setSearch,setSort,sortKey,fil
   const [category, setCategory] = useState("");
 const [price, setPrice] = useState("");
 
-const handleSubmit = () => {
-  if (!category || !price) {
-    toast.error("Please select category and enter price");
-    return;
-  }
-  updatePriceHandler({ category, price });
-  setCategory("");
-  setPrice("");
-};
+const handleSubmit = async () => {
+    // FIX 1: toast now works (imported above)
+    if (!category || !price) {
+      toast.error("Please select category and enter price");
+      return;
+    }
+ 
+    try {
+      // FIX 3: disable button during API call
+      setIsPriceUpdating(true);
+ 
+      // FIX 2: await the handler and show success toast
+      await updatePriceHandler({ category, price });
+ 
+      toast.success(
+        `${category === "gold" ? "Gold" : "Silver"} price updated successfully!`
+      );
+      setCategory("");
+      setPrice("");
+    } catch (error) {
+      toast.error("Failed to update price. Please try again.");
+    } finally {
+      setIsPriceUpdating(false);
+    }
+  };
     return(
       <div className="inventary">
             <Row justify={"center"} gutter={[40,20]}>
