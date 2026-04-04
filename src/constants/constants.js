@@ -72,9 +72,24 @@ export function compareNewAndOldObject({oldObj, newObj}) {
   const changed = {};
 
   for (const key in newObj) {
-    // If value is different or key doesn't exist in oldObj
-    if (oldObj[key] !== newObj[key]) {
-      changed[key] = newObj[key];
+    const oldVal = oldObj[key];
+    const newVal = newObj[key];
+
+    // Array fields — hamesha newVal rakho as-is
+    if (Array.isArray(newVal)) {
+      changed[key] = newVal;
+      continue;
+    }
+
+    // Object fields (images jaise nested objects)
+    if (typeof newVal === "object" && newVal !== null) {
+      changed[key] = newVal;
+      continue;
+    }
+
+    // Primitive comparison
+    if (oldVal !== newVal) {
+      changed[key] = newVal;
     }
   }
 

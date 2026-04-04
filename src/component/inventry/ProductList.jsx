@@ -1,6 +1,7 @@
 import { Col, Image, Row, Select } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import filter from "../../assets/inventary/filter.png";
 import sort from "../../assets/inventary/sort.png";
 import CustomButton from "../common/CustomButton";
@@ -17,16 +18,26 @@ const ProductList=({exportProductHandler,setFilter,setSearch,setSort,sortKey,fil
   const navigate=useNavigate();
   const [category, setCategory] = useState("");
 const [price, setPrice] = useState("");
+const [isPriceUpdating, setIsPriceUpdating] = useState(false);
 
-const handleSubmit = () => {
-  if (!category || !price) {
-    toast.error("Please select category and enter price");
-    return;
-  }
-  updatePriceHandler({ category, price });
-  setCategory("");
-  setPrice("");
-};
+const handleSubmit = async () => {
+    if (!category || !price) {
+      toast.error("Please select category and enter price");
+      return;
+    }
+
+    try {
+      setIsPriceUpdating(true);
+      await updatePriceHandler({ category, price });
+      toast.success(`${category === "gold" ? "Gold" : "Silver"} price updated successfully!`);
+      setCategory("");
+      setPrice("");
+    } catch (error) {
+      toast.error("Failed to update price. Please try again.");
+    } finally {
+      setIsPriceUpdating(false);
+    }
+  };
     return(
       <div className="inventary">
             <Row justify={"center"} gutter={[40,20]}>
@@ -89,8 +100,9 @@ const handleSubmit = () => {
     <div>
       <CustomButton
         onclick={handleSubmit}
+         disabled={isPriceUpdating} 
         className={"!text-[#fff] !bg-[#214344]"}
-        value={"Update Price"}
+         value={isPriceUpdating ? "Updating..." : "Update Price"}
       />
     </div>
 
