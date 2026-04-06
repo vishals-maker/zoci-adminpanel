@@ -103,20 +103,40 @@ const draftsearchHandler=(e)=>{
   }
 
 
-  const updatePriceHandler = async ({ category, price }) => {
+//   const updatePriceHandler = async ({ category, price }) => {
+//   try {
+//     const token = Cookies.get("token");
+//     const res = await dispatch(
+//       updateMetalPriceAsync({ token, data: { category, price } })
+//     ).unwrap();
+//     if (res?.status_code == 200) {
+//       toast.success(res?.message);
+//     }
+//   } catch (error) {
+//     toast.error("Price update failed");
+//   }
+// };
+  
+
+
+const updatePriceHandler = async ({ category, price }) => {
   try {
     const token = Cookies.get("token");
     const res = await dispatch(
       updateMetalPriceAsync({ token, data: { category, price } })
     ).unwrap();
+    
+    console.log("✅ SUCCESS RESPONSE:", res); // ADD THIS
+    
     if (res?.status_code == 200) {
       toast.success(res?.message);
     }
   } catch (error) {
+    console.log("❌ ERROR:", error); // ADD THIS
     toast.error("Price update failed");
   }
 };
-  
+
   useEffect(() => {
     if(liveProducts){
       getAllProducts();
