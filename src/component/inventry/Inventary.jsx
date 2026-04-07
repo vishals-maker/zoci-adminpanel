@@ -30,7 +30,6 @@ const Inventary=()=>{
   const [page,setPage]=useState(1)
   const debouncedText = useDebounce(search, 500); 
   const [liveProducts,setLiveProducts]=useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
   const dispatch=useDispatch();
   const {inventaryDashboard,isDashboardLoading}=useSelector(state=>state?.inventary);
   
@@ -55,7 +54,6 @@ const draftsearchHandler=(e)=>{
   const trimSearch=search.trim();
   const data={
     page:page,
-    limit: 10,
        ...(trimSearch && { search:trimSearch }),
        ...(sortKey?.length>0 && { sort:sortKey[0] }),
        ...(filterKey?.length>0 && { [filterKey[0]]:filterKey[1] }),
@@ -127,19 +125,18 @@ const updatePriceHandler = async ({ category, price }) => {
     const res = await dispatch(
       updateMetalPriceAsync({ token, data: { category, price } })
     ).unwrap();
-
+    
+    console.log("✅ SUCCESS RESPONSE:", res); // ADD THIS
+    
     if (res?.status_code == 200) {
       toast.success(res?.message);
-      setRefreshKey(prev => prev + 1); // 👈 bas yeh kaafi hai
+       await getAllProducts();
     }
   } catch (error) {
+    console.log("❌ ERROR:", error); // ADD THIS
     toast.error("Price update failed");
   }
 };
-
-
-
-
 
   useEffect(() => {
     if(liveProducts){
