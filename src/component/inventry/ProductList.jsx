@@ -29,7 +29,8 @@ const handleSubmit = async () => {
     try {
       setIsPriceUpdating(true);
       await updatePriceHandler({ category, price });
-      toast.success(`${category === "gold" ? "Gold" : "Silver"} price updated successfully!`);
+      // ❌ REMOVE THIS LINE - yahi double toast ka reason hai
+      // toast.success(`${category === "gold" ? "Gold" : "Silver"} price updated successfully!`);
       setCategory("");
       setPrice("");
     } catch (error) {
@@ -38,6 +39,25 @@ const handleSubmit = async () => {
       setIsPriceUpdating(false);
     }
   };
+
+// const handleSubmit = async () => {
+//     if (!category || !price) {
+//       toast.error("Please select category and enter price");
+//       return;
+//     }
+
+//     try {
+//       setIsPriceUpdating(true);
+//       await updatePriceHandler({ category, price });
+//       toast.success(`${category === "gold" ? "Gold" : "Silver"} price updated successfully!`);
+//       setCategory("");
+//       setPrice("");
+//     } catch (error) {
+//       toast.error("Failed to update price. Please try again.");
+//     } finally {
+//       setIsPriceUpdating(false);
+//     }
+//   };
     return(
       <div className="inventary">
             <Row justify={"center"} gutter={[40,20]}>
