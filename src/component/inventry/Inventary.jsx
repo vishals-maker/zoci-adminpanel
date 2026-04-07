@@ -29,6 +29,7 @@ const Inventary=()=>{
   const [sortKey,setSort]=useState([]);
   const [page,setPage]=useState(1)
   const debouncedText = useDebounce(search, 500); 
+  const [refreshKey, setRefreshKey] = useState(0);
   const [liveProducts,setLiveProducts]=useState(true);
   const dispatch=useDispatch();
   const {inventaryDashboard,isDashboardLoading}=useSelector(state=>state?.inventary);
@@ -126,6 +127,8 @@ const updatePriceHandler = async ({ category, price }) => {
     if (res?.status_code == 200) {
       toast.success(res?.message);
       setPage(1);           // 👈 page reset karo
+
+       await getAllProducts();
       setRefreshKey(prev => prev + 1);  // 👈 yeh add karo
     }
   } catch (error) {
@@ -140,7 +143,7 @@ const updatePriceHandler = async ({ category, price }) => {
     }else{
       getDraftTable()
     }
-}, [debouncedText,filterKey,sortKey,page,liveProducts]);
+}, [debouncedText,filterKey,sortKey,page,liveProducts,refreshKey]);
   useEffect(()=>{
      getInventary();
   },[])
