@@ -130,6 +130,7 @@ const updatePriceHandler = async ({ category, price }) => {
     
     if (res?.status_code == 200) {
       toast.success(res?.message);
+       await getAllProducts();
     }
   } catch (error) {
     console.log("❌ ERROR:", error); // ADD THIS
