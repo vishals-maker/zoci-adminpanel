@@ -29,6 +29,7 @@ const Inventary=()=>{
   const [sortKey,setSort]=useState([]);
   const [page,setPage]=useState(1)
   const debouncedText = useDebounce(search, 500); 
+  const [refreshKey, setRefreshKey] = useState(0);
   const [liveProducts,setLiveProducts]=useState(true);
   const dispatch=useDispatch();
   const {inventaryDashboard,isDashboardLoading}=useSelector(state=>state?.inventary);
@@ -50,24 +51,21 @@ const exportProductHandler = async () => {
 const draftsearchHandler=(e)=>{
   setSearch(e.target.value)
 }
- const getAllProducts=async()=>{
-  const trimSearch=search.trim();
-  const data={
-    page:page,
-       ...(trimSearch && { search:trimSearch }),
-       ...(sortKey?.length>0 && { sort:sortKey[0] }),
-       ...(filterKey?.length>0 && { [filterKey[0]]:filterKey[1] }),
-  }
-  if (search && !trimSearch) {
-    return; 
-  }
-    try {
-    const res=await dispatch(getAllProductAsync({token,data})).unwrap();
-    } catch (error) {
-      //  toast.error("Something went wrong. Please try again.");
 
-    }
-  }
+
+const getAllProducts = async () => {
+  const trimSearch = debouncedText.trim(); // 👈 search ki jagah debouncedText
+  const data = {
+    page: page,
+    limit: 10,
+    ...(trimSearch && { search: trimSearch }),
+    ...(sortKey?.length > 0 && { sort: sortKey[0] }),
+    ...(filterKey?.length > 0 && { [filterKey[0]]: filterKey[1] }),
+  };
+  try {
+    await dispatch(getAllProductAsync({ token, data })).unwrap();
+  } catch (error) {}
+};
 
   const getDraftTable=async()=>{
      const trimSearch=search.trim();
@@ -103,20 +101,41 @@ const draftsearchHandler=(e)=>{
   }
 
 
-  const updatePriceHandler = async ({ category, price }) => {
+//   const updatePriceHandler = async ({ category, price }) => {
+//   try {
+//     const token = Cookies.get("token");
+//     const res = await dispatch(
+//       updateMetalPriceAsync({ token, data: { category, price } })
+//     ).unwrap();
+//     if (res?.status_code == 200) {
+//       toast.success(res?.message);
+//     }
+//   } catch (error) {
+//     toast.error("Price update failed");
+//   }
+// };
+  
+
+
+const updatePriceHandler = async ({ category, price }) => {
   try {
     const token = Cookies.get("token");
     const res = await dispatch(
       updateMetalPriceAsync({ token, data: { category, price } })
     ).unwrap();
+
     if (res?.status_code == 200) {
       toast.success(res?.message);
+      setPage(1);           // 👈 page reset karo
+
+       await getAllProducts();
+      setRefreshKey(prev => prev + 1);  // 👈 yeh add karo
     }
   } catch (error) {
     toast.error("Price update failed");
   }
 };
-  
+
   useEffect(() => {
     if(liveProducts){
       getAllProducts();
@@ -124,7 +143,7 @@ const draftsearchHandler=(e)=>{
     }else{
       getDraftTable()
     }
-}, [debouncedText,filterKey,sortKey,page,liveProducts]);
+}, [debouncedText,filterKey,sortKey,page,liveProducts,refreshKey]);
   useEffect(()=>{
      getInventary();
   },[])

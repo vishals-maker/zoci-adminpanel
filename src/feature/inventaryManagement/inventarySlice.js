@@ -445,7 +445,7 @@ export const deleteSelectedDraftProducts = createAsyncThunk(
 
 export const updateMetalPriceAsync = createAsyncThunk(
   "inventary/updateMetalPrice",
-  async ({ token, data }) => {
+  async ({ token, data }, { rejectWithValue }) => {
     try {
       const res = await api.put(`/product/update-metal-price`, data, {
         headers: {
@@ -455,7 +455,7 @@ export const updateMetalPriceAsync = createAsyncThunk(
       });
       return res?.data;
     } catch (error) {
-      throw error;
+      return rejectWithValue(error?.response?.data); 
     }
   },
 );

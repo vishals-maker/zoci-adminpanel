@@ -57,7 +57,7 @@ const CreateNewProduct = () => {
     yearOfDesign: new Date().getFullYear(),
     collection: "",
     // FIX: metalType is an array (multi-select)
-    metalType: [],
+    metalType: "",
     metalColor: "",
     stone: "",
     designTags: [],
@@ -195,9 +195,7 @@ const CreateNewProduct = () => {
  const createProductHandler = async () => {
   // HUID validation — metalType is now an array, use .some()
   const goldTypes = ["G18K", "G14K", "G9K"];
-  const isGoldSelected = productInput?.metalType?.some((t) =>
-    goldTypes.includes(t),
-  );
+ const isGoldSelected = ["G18K", "G14K", "G9K"].includes(productInput?.metalType);
   if (isGoldSelected && !productInput?.hudNo) {
     return toast.error("HUID No. is required for gold products");
   }
@@ -216,8 +214,16 @@ const CreateNewProduct = () => {
     price: productInput?.finalPrice || 0,
     exclusive:
       productInput.exclusive === true || productInput.exclusive === "true",
-    metalType: productInput.metalType,
+   metalType: productInput.metalType,
     weight: productInput.weight || undefined,
+    goldWeight:   Number(productInput?.goldWeight)   || 0,
+  goldLabour:   Number(productInput?.goldLabour)   || 0,
+  goldPrice:    Number(productInput?.goldPrice)    || 0,
+  silverWeight: Number(productInput?.silverWeight) || 0,
+  silverLabour: Number(productInput?.silverLabour) || 0,
+  silverPrice:  Number(productInput?.silverPrice)  || 0,
+  finalPrice:   Number(productInput?.finalPrice)   || 0,
+  otherCharges: Number(productInput?.otherCharges) || 0,
   };
 
   try {
@@ -262,16 +268,42 @@ const CreateNewProduct = () => {
   }
 };
 
-  const getProductByIdData = async () => {
-    try {
-      const res = await dispatch(
-        getAllProductByIdAsync({ token, id: state?.id }),
-      ).unwrap();
-      if (res.success) {
-        setProductInput({ ...res?.product });
-      }
-    } catch (error) {}
-  };
+  // const getProductByIdData = async () => {
+  //   try {
+  //     const res = await dispatch(
+  //       getAllProductByIdAsync({ token, id: state?.id }),
+  //     ).unwrap();
+  //     if (res.success) {
+  //       setProductInput({ ...res?.product });
+  //     }
+  //   } catch (error) {}
+  // };
+
+const getProductByIdData = async () => {
+  try {
+    const res = await dispatch(
+      getAllProductByIdAsync({ token, id: state?.id }),
+    ).unwrap();
+     console.log("FULL RES:", res);
+    console.log("goldWeight:", res?.product?.goldWeight);
+    console.log("goldPrice:", res?.product?.goldPrice);
+    console.log("silverWeight:", res?.product?.silverWeight);
+    if (res.success) {
+      const p = res?.product;
+      setProductInput({
+        ...p,
+        goldWeight:   p?.goldWeight   ? String(p.goldWeight)   : "",
+        goldLabour:   p?.goldLabour   ? String(p.goldLabour)   : "",
+        goldPrice:    p?.goldPrice    ? String(p.goldPrice)    : "",
+        silverWeight: p?.silverWeight ? String(p.silverWeight) : "",
+        silverLabour: p?.silverLabour ? String(p.silverLabour) : "",
+        silverPrice:  p?.silverPrice  ? String(p.silverPrice)  : "",
+        finalPrice:   p?.finalPrice || p?.price || 0,
+        price:        p?.price || 0,
+      });
+    }
+  } catch (error) {}
+};
 
   const getDraftProductById = async () => {
     try {
@@ -296,7 +328,7 @@ const CreateNewProduct = () => {
       yearOfDesign: new Date().getFullYear(),
       collection: "",
       // FIX: reset as array not string
-      metalType: [],
+      metalType: "",
       metalColor: "",
       stone: "",
       designTags: [],
@@ -367,18 +399,20 @@ const CreateNewProduct = () => {
 
   if (isMediaLoading || isCreateProductLoading) return <Loader />;
 
-  const isGold = productInput?.metalType?.some((type) =>
-    ["G18K", "G14K", "G9K", "Y22K", "Y18K", "Y14K", "Y9K"].includes(type),
-  );
+  // const isGold = productInput?.metalType?.some((type) =>
+  //   ["G18K", "G14K", "G9K", "Y22K", "Y18K", "Y14K", "Y9K"].includes(type),
+  // );
 
-  const isSilver = productInput?.metalType?.some((type) =>
-    ["STERLING SILVER (925)", "ARGENTIUM SILVER (935)"].includes(type),
-  );
+  // const isSilver = productInput?.metalType?.some((type) =>
+  //   ["STERLING SILVER (925)", "ARGENTIUM SILVER (935)"].includes(type),
+  // );
 
   // FIX: HUID label required check — was using wrong key "baseMetalType"
-  const isHuidRequired = productInput?.metalType?.some((t) =>
-    ["G18K", "G14K", "G9K"].includes(t),
-  );
+  // const isHuidRequired = productInput?.metalType?.some((t) =>
+  //   ["G18K", "G14K", "G9K"].includes(t),
+  // );
+
+  const isHuidRequired = ["G18K", "G14K", "G9K"].includes(productInput?.metalType);
 
   return (
     <>
@@ -476,7 +510,7 @@ const CreateNewProduct = () => {
                 <div className="flex flex-col gap-2">
                   <CustomLabel required value={"Base Metal Type"} />
                   <CustomSelect
-                    mode="multiple"
+                 
                     value={productInput?.metalType}
                     onchange={(e) => {
                       setProductInput({
@@ -565,61 +599,65 @@ const CreateNewProduct = () => {
             </Row>
             <Row gutter={[40, 40]}>
               {/* GOLD FIELDS — shown when gold metal type selected */}
-<>
-  <Col span={8}>
-    <CustomLabel value="Gold Weight (gm)" />
-    <CustomInput
-      name="goldWeight"
-      value={productInput?.goldWeight}
-      onchange={productInputHandler}
-    />
-  </Col>
 
-  <Col span={8}>
-    <CustomLabel value="Gold Labour / gm" />
-    <CustomInput
-      name="goldLabour"
-      value={productInput?.goldLabour}
-      onchange={productInputHandler}
-    />
-  </Col>
+              {/* {isGold && ( */}
+                <>
+                  <Col span={8}>
+                    <CustomLabel value="Gold Weight (gm)" />
+                    <CustomInput
+                      name="goldWeight"
+                      value={productInput?.goldWeight}
+                      onchange={productInputHandler}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <CustomLabel value="Gold Labour / gm" />
+                    <CustomInput
+                      name="goldLabour"
+                      value={productInput?.goldLabour}
+                      onchange={productInputHandler}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <CustomLabel value="Gold Price / gm" />
+                    <CustomInput
+                      name="goldPrice"
+                      value={productInput?.goldPrice}
+                      onchange={productInputHandler}
+                    />
+                  </Col>
+                </>
+              {/* )} */}
 
-  <Col span={8}>
-    <CustomLabel value="Gold Price / gm" />
-    <CustomInput
-      name="goldPrice"
-      value={productInput?.goldPrice}
-      onchange={productInputHandler}
-    />
-  </Col>
-
-  <Col span={8}>
-    <CustomLabel value="Silver Weight (gm)" />
-    <CustomInput
-      name="silverWeight"
-      value={productInput?.silverWeight}
-      onchange={productInputHandler}
-    />
-  </Col>
-
-  <Col span={8}>
-    <CustomLabel value="Silver Labour / gm" />
-    <CustomInput
-      name="silverLabour"
-      value={productInput?.silverLabour}
-      onchange={productInputHandler}
-    />
-  </Col>
-
-  <Col span={8}>
-    <CustomLabel value="Silver Price / gm" />
-    <CustomInput
-      name="silverPrice"
-      value={productInput?.silverPrice}
-      onchange={productInputHandler}
-    />
-  </Col>
-</>
+              {/* SILVER FIELDS — shown when silver metal type selected */}
+              {/* {isSilver && ( */}
+                <>
+                  <Col span={8}>
+                    <CustomLabel value="Silver Weight (gm)" />
+                    <CustomInput
+                      name="silverWeight"
+                      value={productInput?.silverWeight}
+                      onchange={productInputHandler}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <CustomLabel value="Silver Labour / gm" />
+                    <CustomInput
+                      name="silverLabour"
+                      value={productInput?.silverLabour}
+                      onchange={productInputHandler}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <CustomLabel value="Silver Price / gm" />
+                    <CustomInput
+                      name="silverPrice"
+                      value={productInput?.silverPrice}
+                      onchange={productInputHandler}
+                    />
+                  </Col>
+                </>
+              {/* )} */}
 
               <Col span={12}>
                 <div className="flex flex-col gap-2">
