@@ -139,13 +139,43 @@ const CreateNewProduct = () => {
     return { label: item?.title, value: item?.title };
   });
 
-  const productInputHandler = (e) => {
-    const { name, value } = e.target;
-    if (specialChar?.test(value) && name != "weight" && name != "description")
-      return;
-    setProductInput({ ...productInput, [name]: value });
-  };
+  // const productInputHandler = (e) => {
+  //   const { name, value } = e.target;
+  //   if (specialChar?.test(value) && name != "weight" && name != "description")
+  //     return;
+  //   setProductInput({ ...productInput, [name]: value });
+  // };
+const productInputHandler = (e) => {
+  const { name, value } = e.target;
 
+  const decimalFields = [
+    "goldWeight",
+    "goldLabour",
+    "goldPrice",
+    "silverWeight",
+    "silverLabour",
+    "silverPrice",
+    "weight",
+    "price",
+    "otherCharges",
+  ];
+
+  if (decimalFields.includes(name)) {
+    if (!/^\d*\.?\d*$/.test(value)) return;
+  } else {
+    if (
+      specialChar?.test(value) &&
+      name !== "description"
+    ) {
+      return;
+    }
+  }
+
+  setProductInput((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
   const handleUpload = async (e, status) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -565,7 +595,7 @@ const CreateNewProduct = () => {
             </Row>
             <Row gutter={[40, 40]}>
               {/* GOLD FIELDS — shown when gold metal type selected */}
-<>
+            <>
   <Col span={8}>
     <CustomLabel value="Gold Weight (gm)" />
     <CustomInput
@@ -577,17 +607,23 @@ const CreateNewProduct = () => {
 
   <Col span={8}>
     <CustomLabel value="Gold Labour / gm" />
-    <CustomInput
+                  <CustomInput
+                      type="number"
+  step="0.01"
+  min="0"
       name="goldLabour"
       value={productInput?.goldLabour}
       onchange={productInputHandler}
     />
   </Col>
 
-  <Col span={8}>
-    <CustomLabel value="Gold Price / gm" />
-    <CustomInput
-      name="goldPrice"
+                  <Col span={8}>
+                    <CustomLabel value="Gold Price / gm" />
+                    <CustomInput
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      name="goldPrice"
       value={productInput?.goldPrice}
       onchange={productInputHandler}
     />
@@ -596,7 +632,10 @@ const CreateNewProduct = () => {
   <Col span={8}>
     <CustomLabel value="Silver Weight (gm)" />
     <CustomInput
-      name="silverWeight"
+                    name="silverWeight"
+                      type="number"
+  step="0.01"
+  min="0"
       value={productInput?.silverWeight}
       onchange={productInputHandler}
     />
@@ -605,7 +644,10 @@ const CreateNewProduct = () => {
   <Col span={8}>
     <CustomLabel value="Silver Labour / gm" />
     <CustomInput
-      name="silverLabour"
+                    name="silverLabour"
+                      type="number"
+  step="0.01"
+  min="0"
       value={productInput?.silverLabour}
       onchange={productInputHandler}
     />
@@ -614,13 +656,15 @@ const CreateNewProduct = () => {
   <Col span={8}>
     <CustomLabel value="Silver Price / gm" />
     <CustomInput
-      name="silverPrice"
+                    name="silverPrice"
+                      type="number"
+  step="0.01"
+  min="0"
       value={productInput?.silverPrice}
       onchange={productInputHandler}
     />
   </Col>
 </>
-
               <Col span={12}>
                 <div className="flex flex-col gap-2">
                   <CustomLabel required value={"Final Price"} />
