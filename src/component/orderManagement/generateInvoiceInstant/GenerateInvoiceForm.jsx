@@ -85,28 +85,42 @@ const GenerateInvoiceForm = () => {
       return accumulator + currentValue?.price * currentValue?.quantity;
     },0);
   const discountPrice =subTotal - subTotal * (invoiceInputHandler?.discount / 100);
+
   const invoiceInputDataHandler = (e, item) => {
-  if(item != "paymentMethod"){
-     const {name,value}=e.target;
-       if(specialChar?.test(value)) return ;
-       if(name=="mobile" && value?.length>10  ) return;
-       if(name=="discount" && value>100 || value<0) return;
-  }
-    if (item == "paymentMethod") {
-  
-      setInvoiceInputHandler({ ...invoiceInputHandler, [item]: e });
-    } else if (item == "date") {
-      setInvoiceInputHandler({
-        ...invoiceInputHandler,
-        [item]: e.format("YYYY-MM-DD"),
-      });
-    } else {
-      setInvoiceInputHandler({
-        ...invoiceInputHandler,
-        [e.target.name]: e.target.value,
-      });
+  if (item !== "paymentMethod") {
+    const { name, value } = e.target;
+
+    // Skip specialChar validation for discount field
+    if (name !== "discount" && specialChar?.test(value)) return;
+
+    if (name === "mobile" && value?.length > 10) return;
+
+    if (name === "discount") {
+      // Allow empty, digits, and one decimal point
+      if (!/^\d*\.?\d*$/.test(value)) return;
+
+      // Prevent more than 100
+      if (value !== "" && Number(value) > 100) return;
     }
-  };
+  }
+
+  if (item === "paymentMethod") {
+    setInvoiceInputHandler({
+      ...invoiceInputHandler,
+      [item]: e,
+    });
+  } else if (item === "date") {
+    setInvoiceInputHandler({
+      ...invoiceInputHandler,
+      [item]: e.format("YYYY-MM-DD"),
+    });
+  } else {
+    setInvoiceInputHandler({
+      ...invoiceInputHandler,
+      [e.target.name]: e.target.value,
+    });
+  }
+};
 
   const quantityHandler = (record, item) => {
     if (

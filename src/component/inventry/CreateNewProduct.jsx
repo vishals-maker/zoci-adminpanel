@@ -599,6 +599,7 @@ const getProductByIdData = async () => {
             </Row>
             <Row gutter={[40, 40]}>
               {/* GOLD FIELDS — shown when gold metal type selected */}
+
               {/* {isGold && ( */}
                 <>
                   <Col span={8}>
