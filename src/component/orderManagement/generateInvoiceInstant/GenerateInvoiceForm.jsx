@@ -577,12 +577,15 @@ const GenerateInvoiceForm = () => {
               <Typography.Text className="text-[#214344] !font-[600] !text-[14px]">
                 Date
               </Typography.Text>
-              <DatePicker
-                defaultValue={dayjs()}
-                onchange={(e) => {
-                  invoiceInputDataHandler(e, "date");
-                }}
-              />
+<DatePicker
+  value={invoiceInputHandler?.date ? dayjs(invoiceInputHandler.date) : null}
+  onChange={(date) => {
+    setInvoiceInputHandler((prev) => ({
+      ...prev,
+      date: date ? date.format("YYYY-MM-DD") : "",
+    }));
+  }}
+/>
             </div>
           </Col>
         </Row>
