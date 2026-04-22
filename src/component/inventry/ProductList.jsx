@@ -82,49 +82,47 @@ const handleSubmit = async () => {
       />
     </div>
 
-    {/* Update Product Price Label */}
-    <div>
-      <CustomText
-        className={"font-bold !text-[#214344]"}
-        value={"Update Product Price"}
-      />
-    </div>
+   {/*
+<div>
+  <CustomText
+    className={"font-bold !text-[#214344]"}
+    value={"Update Product Price"}
+  />
+</div>
 
-    {/* Dropdown - Gold / Silver */}
-   <div>
- <Select
-  value={category || undefined}  // ✅ "" ki jagah undefined karo
-  onChange={(value) => setCategory(value)}
-  placeholder="Select Product"
-  className="!w-[180px] h-[46px]"
-  options={[
-    { label: "Gold", value: "gold" },
-    { label: "Silver", value: "silver" },
-  ]}
-/>
-   </div>
+<div>
+  <Select
+    value={category || undefined}
+    onChange={(value) => setCategory(value)}
+    placeholder="Select Product"
+    className="!w-[180px] h-[46px]"
+    options={[
+      { label: "Gold", value: "gold" },
+      { label: "Silver", value: "silver" },
+    ]}
+  />
+</div>
 
-    {/* Price Input */}
-    <div>
-      <CustomInput
-        type="number"
-        name="price"
-        value={price}
-        onchange={(e) => setPrice(e.target.value)}
-        placeholder={"Enter price"}
-        className={"!w-[160px] h-[46px]"}
-      />
-    </div>
+<div>
+  <CustomInput
+    type="number"
+    name="price"
+    value={price}
+    onchange={(e) => setPrice(e.target.value)}
+    placeholder={"Enter price"}
+    className={"!w-[160px] h-[46px]"}
+  />
+</div>
 
-    {/* Submit Button */}
-    <div>
-      <CustomButton
-        onclick={handleSubmit}
-         disabled={isPriceUpdating} 
-        className={"!text-[#fff] !bg-[#214344]"}
-         value={isPriceUpdating ? "Updating..." : "Update Price"}
-      />
-    </div>
+<div>
+  <CustomButton
+    onclick={handleSubmit}
+    disabled={isPriceUpdating}
+    className={"!text-[#fff] !bg-[#214344]"}
+    value={isPriceUpdating ? "Updating..." : "Update Price"}
+  />
+</div>
+*/}
 
   </div>
 </Col>
