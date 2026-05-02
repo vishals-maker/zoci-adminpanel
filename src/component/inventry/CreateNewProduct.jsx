@@ -49,6 +49,7 @@ const CreateNewProduct = () => {
   const [productInput, setProductInput] = useState({
     title: "",
     description: "",
+    sku:"",
     price: 0,
     otherCharges: null,
     productionSource: "",
@@ -320,6 +321,7 @@ const getProductByIdData = async () => {
     setProductInput({
       title: "",
       description: "",
+      sku:"",
       price: 0,
       otherCharges: null,
       productionSource: "",
@@ -504,6 +506,18 @@ const getProductByIdData = async () => {
                   />
                 </div>
               </Col>
+                <Col span={12}>
+    <div className="flex flex-col gap-2">
+      <CustomLabel value={"SKU (Optional)"} />
+      <CustomInput
+        name="sku"
+        value={productInput?.sku}
+        onchange={productInputHandler}
+        placeholder="Enter SKU"
+        className="!rounded-full"
+      />
+    </div>
+  </Col>
             </Row>
             <Row gutter={[40, 40]}>
               <Col span={12}>
@@ -658,6 +672,7 @@ const getProductByIdData = async () => {
                   </Col>
                 </>
               {/* )} */}
+
 
               <Col span={12}>
                 <div className="flex flex-col gap-2">
