@@ -39,8 +39,9 @@ const NetProfitTable=({item,setPage,page})=>{
     align:"start",
     render: (text) => (
       <CustomText
-       value={`Rs. ${text}`}
-      />
+      value={`Rs. ${text}`}
+      className="!text-red-500 font-semibold"
+    />
     ),
   },
 
@@ -50,11 +51,12 @@ const NetProfitTable=({item,setPage,page})=>{
     key: "amount",
     width: 150,
     align:"start",
-    render: (text) => (
-      <CustomText
-        value={`Rs. ${text}`}
-      />
-    ),
+   render: (text) => (
+  <CustomText
+    value={`Rs. ${text}`}
+    className="!text-green-500 font-semibold"
+  />
+),
   },
   {
     title: <CustomText className="!text-[14px] !text-[#fff] font-semibold" value="Packaging Charge" />,
@@ -63,7 +65,10 @@ const NetProfitTable=({item,setPage,page})=>{
     width: 150,
     align:"start",
     render: (text) => (
-      <CustomText value={`Rs. ${text}`} />
+      <CustomText
+      value={`Rs. ${text}`}
+      className="!text-red-500 font-semibold"
+    />
     ),
   },
 
